@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-
     <title>Disipar Pensamientos</title>
     <style>
         body {
@@ -101,21 +99,9 @@
         .boton-comenzar:hover {
             background-color: #f3f3f3;
         }
-
-      
-        #p5_canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 100000; /* Asegura que esté sobre el contenido */
-        pointer-events: none; /* Permite hacer clic en elementos debajo del canvas */
-    }
-
     </style>
 </head>
 <body>
-    <canvas> </canvas>
     <div class="container">
         <button class="boton-comenzar" id="botonComenzar">Comenzar</button>
         <div class="mago" id="mago">
@@ -311,8 +297,8 @@ function generarLetra() {
     const x = 50 + Math.cos(angle) * radius;
     const y = 30 + Math.sin(angle) * radius;
 
-    elementoLetra.style.top = `${y}%`;
-    elementoLetra.style.left = `${x}%`;
+    elementoLetra.style.top = ${y}%;
+    elementoLetra.style.left = ${x}%;
     elementoLetra.innerText = letraRandom;
 
     container.appendChild(elementoLetra);
@@ -483,149 +469,8 @@ function iniciarAnimacionSpans() {
 
 
 
-let canvas;
-
-function setup() {
-    canvas = createCanvas(500, 300);
-    canvas.position(windowWidth / 2 - width / 2, windowHeight / 2 - height / 2);
-    canvas.style('z-index', '-1'); // Asegura que el canvas esté detrás del contenido HTML
-    noLoop();
-}
-
-function draw() {
-    background(0, 0); // Fondo transparente
-    if (animacionActiva) {
-        drawCymatics(frecuenciaActual);
-    }
-}
-
-function drawCymatics(frequency) {
-    // Simulación simple de los patrones de Cymatics
-    let numCircles = map(frequency, 100, 2000, 2, 10); // Mapea la frecuencia al número de círculos
-    let maxSize = map(frequency, 100, 2000, 50, 150); // Mapea la frecuencia al tamaño de los círculos
-
-    noFill();
-    stroke(255);
-    strokeWeight(2);
-
-    for (let i = 0; i < numCircles; i++) {
-        let size = maxSize * (i + 1) / numCircles;
-        ellipse(width / 2, height / 2, size, size);
-    }
-}
-
-function iniciarAnimacionSpans() {
-    const span = document.querySelector('.mago span');
-    span.setAttribute('data-original-text', span.innerText);
-
-    setInterval(cambiarCaracteres, 100);
-    setInterval(restaurarCaracteres, 20000);
-    setTimeout(() => loop(), 10000); // Comienza a dibujar después de 10 segundos
-}
-
-
-
     </script>
-
-<script>
-
-canvas.style('visibility', 'visible');
-canvas.style('display', 'block');
-
-    let canvas;
-    let frecuenciaActual = 0;
-    let granulado = [];
-    let tiempoInicio = 0;
-
-    function setup() {
-    canvas = createCanvas(windowWidth, windowHeight);
-    canvas.id('p5_canvas');
-    canvas.style('z-index', '1000'); // Asegura que esté sobre el contenido
-    canvas.style('position', 'absolute');
-    noLoop(); // No dibujar automáticamente, se controla con loop() y noLoop()
-    
-    // Crear el granulado inicial
-    for (let i = 0; i < 1000; i++) {
-        granulado.push({
-            x: random(width),
-            y: random(height),
-            r: random(1, 3),
-        });
-    }
-
-    // Iniciar la animación después de 2 segundos
-    setTimeout(() => {
-        loop();
-        generarFrecuencia();
-    }, 2000);
-}
-        // Iniciar la animación después de 2 segundos
-        setTimeout(() => {
-            loop();
-            generarFrecuencia();
-        }, 2000);
-    
-
-function draw() {
-    console.log('Drawing...');
-    background(255); // Cambia a un color claro para asegurar que las figuras sean visibles
-    drawCymatics(frecuenciaActual);
-    drawGranulado();
-}
-
-
-
-function positionCanvas() {
-    canvas.position(0, 0);
-    canvas.size(windowWidth, windowHeight); // Asegura que el canvas ocupe toda la ventana
-}
-
-
-    function drawCymatics(frequency) {
-        let numCircles = map(frequency, 100, 2000, 2, 10);
-        let maxSize = map(frequency, 100, 2000, 50, 150);
-
-        noFill();
-        stroke(0); // Figuras en negro
-        strokeWeight(2);
-
-        for (let i = 0; i < numCircles; i++) {
-            let size = maxSize * (i + 1) / numCircles;
-            ellipse(width / 2, height / 2, size, size);
-        }
-    }
-
-    function drawGranulado() {
-        noStroke();
-        fill(0, 0, 0, 150); // Negro con algo de transparencia
-        for (let i = 0; i < granulado.length; i++) {
-            let p = granulado[i];
-            ellipse(p.x, p.y, p.r, p.r);
-        }
-    }
-
-
-
-    function generarFrecuencia() {
-        if (millis() - tiempoInicio > 10000) { // Detener después de 10 segundos
-            noLoop();
-            return;
-        }
-
-        frecuenciaActual = random(100, 2000);
-        actualizarFrecuencia(frecuenciaActual);
-        setTimeout(generarFrecuencia, 2000); // Genera una nueva frecuencia cada 2 segundos
-    }
-
-    function actualizarFrecuencia(frecuencia) {
-        frecuenciaActual = frecuencia;
-        redraw(); // Redibuja el canvas con la nueva frecuencia
-    }
-
-    window.addEventListener('resize', positionCanvas);
-</script>
-
-
 </body>
-
 </html>
+
+
