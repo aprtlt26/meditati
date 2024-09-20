@@ -353,14 +353,14 @@
                                                 ..............................'','''.'',;;;;,',;::,,;;;;;,'''',,;:;'',;''',,';:;;,,;:lc,';:c:;;;,':l:'...''..;:,,'.',...';;::;',;',,';c;..''....':ol,';c::c:,'';,'',,;;;;;;,'',;;,.';,'',;;;;,,,;;,,,,'';::;,,'',;;;,''.........................................           .....
                                              ................................'''....''',;,''';;;'',;,;,'....'',;;,'',,'',,'',;;,,,;:c:,',;:;;;;,.,c:'.......';,''..''...',;;;,'','''''::'........':c:,',:;::;'..,,..'',;;,,,'''',;,..','.',,,,,'',;,'''''',;;,'''.',;;,'..........................................              
                                               .....................................'',,,'.',;,'.',,,,'......'',,'.'''..'''',;,''',;::,'';;;,,,,.';:,........','''........',,,,..''.'..,:,.........':c;'.,;,;;;'..,'....',,,,,'...','...'...''',,'..',,..'...,;;,'...',,,,'............................  ............         </span>   
-    </pre>                <!-- Arte ASCII completo -->
+    </pre>   
+            <!-- Arte ASCII completo -->
             </span>
             </pre>
         </div>
 
         <!-- Botón solo para móvil -->
-        <button id="inputButton">Escribir palabra</button>
-        <input type="text" id="inputTeclado" placeholder="Escribe aquí">
+       
     </div>
 
     <div id="boxes" class="container">
@@ -408,6 +408,7 @@
             if (letras.includes(letra)) {
                 eliminarLetra(letra);
                 e.target.value = ''; // Limpiar el campo después de cada letra
+                verificarLetrasRestantes(); // Verifica si se deben mostrar las cartas
             }
         });
 
@@ -415,6 +416,7 @@
             if (letrasRestantes.size === 0) {
                 detenerAnimacionYRestaurarDibujo();
                 generarRuidoBlanco();
+                mostrarCartas(); // Muestra las cartas si se han capturado todas las letras
                 return;
             }
 
@@ -478,7 +480,7 @@
                 }
             }, 1000);
 
-            setTimeout(generarLetra, Math.random() * 1000);
+            setTimeout(generarLetra, Math.random() * 2000);
         }
 
         function eliminarLetra(letra) {
@@ -574,6 +576,7 @@
         document.addEventListener('keydown', (e) => {
             const letra = e.key.toUpperCase();
             eliminarLetra(letra);
+            verificarLetrasRestantes(); // Verifica si se deben mostrar las cartas
         });
 
         function iniciarAnimacionSpans() {
@@ -620,6 +623,20 @@
             clearInterval(intervaloCambiarCaracteres);
             clearInterval(intervaloRestaurarCaracteres);
         }
+
+        // Verificar si ya no quedan letras restantes y mostrar cartas
+        function verificarLetrasRestantes() {
+            if (letrasRestantes.size === 0) {
+                mostrarCartas();
+            }
+        }
+
+        // Mostrar las cartas
+        function mostrarCartas() {
+            document.getElementById('boxes').style.display = 'flex';
+            crearCasillas(); // Generar las cartas
+        }
+
     </script>
 </body>
 </html>
