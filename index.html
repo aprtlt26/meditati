@@ -416,7 +416,6 @@
             if (letrasRestantes.size === 0) {
                 detenerAnimacionYRestaurarDibujo();
                 generarRuidoBlanco();
-                mostrarCartas(); // Muestra las cartas si se han capturado todas las letras
                 return;
             }
 
@@ -438,6 +437,16 @@
 
             letrasEnPantalla[letraRandom] = elementoLetra;
 
+            // Evento para eliminar letra con teclado
+            document.addEventListener('keydown', (e) => {
+                const letra = e.key.toUpperCase();
+                eliminarLetra(letra);
+            });
+
+            // Evento para eliminar letra con touch en móvil
+            elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
+
+            // Sonido de la letra
             const frecuencia = 100 + (letraRandom.charCodeAt(0) - 95) * 100;
             const oscillator = audioContext.createOscillator();
             oscillator.type = 'sine';
@@ -480,7 +489,7 @@
                 }
             }, 1000);
 
-            setTimeout(generarLetra, Math.random() * 2000);
+            setTimeout(generarLetra, Math.random() * 1000);
         }
 
         function eliminarLetra(letra) {
@@ -638,7 +647,6 @@
         }
 
         // Agregar evento touchstart para dispositivos móviles
-elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
 
 
     </script>
