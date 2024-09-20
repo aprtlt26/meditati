@@ -637,6 +637,10 @@
             crearCasillas(); // Generar las cartas
         }
 
+        // Agregar evento touchstart para dispositivos móviles
+elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
+
+
     </script>
 </body>
 </html>
