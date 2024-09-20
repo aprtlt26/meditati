@@ -171,6 +171,26 @@
                 margin-left: 0;
                 top: 80%;
             }
+
+            /* Botón para activar teclado */
+            #inputButton {
+                display: block;
+                margin-top: 20px;
+                padding: 10px;
+                background-color: #fff;
+                border: 1px dashed #000;
+                color: black;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            #inputTeclado {
+                display: none;
+                margin-top: 10px;
+                padding: 5px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+            }
         }
     </style>
 </head>
@@ -333,10 +353,14 @@
                                                 ..............................'','''.'',;;;;,',;::,,;;;;;,'''',,;:;'',;''',,';:;;,,;:lc,';:c:;;;,':l:'...''..;:,,'.',...';;::;',;',,';c;..''....':ol,';c::c:,'';,'',,;;;;;;,'',;;,.';,'',;;;;,,,;;,,,,'';::;,,'',;;;,''.........................................           .....
                                              ................................'''....''',;,''';;;'',;,;,'....'',;;,'',,'',,'',;;,,,;:c:,',;:;;;;,.,c:'.......';,''..''...',;;;,'','''''::'........':c:,',:;::;'..,,..'',;;,,,'''',;,..','.',,,,,'',;,'''''',;;,'''.',;;,'..........................................              
                                               .....................................'',,,'.',;,'.',,,,'......'',,'.'''..'''',;,''',;::,'';;;,,,,.';:,........','''........',,,,..''.'..,:,.........':c;'.,;,;;;'..,'....',,,,,'...','...'...''',,'..',,..'...,;;,'...',,,,'............................  ............         </span>   
-    </pre>            <!-- Arte ASCII completo -->
+    </pre>                <!-- Arte ASCII completo -->
             </span>
             </pre>
         </div>
+
+        <!-- Botón solo para móvil -->
+        <button id="inputButton">Escribir palabra</button>
+        <input type="text" id="inputTeclado" placeholder="Escribe aquí">
     </div>
 
     <div id="boxes" class="container">
@@ -370,6 +394,21 @@
             document.querySelectorAll('.mago, .letra').forEach(element => {
                 element.classList.add('no-shadow');
             });
+        });
+
+        // Mostrar input para escribir en móvil
+        document.getElementById('inputButton').addEventListener('click', () => {
+            const inputTeclado = document.getElementById('inputTeclado');
+            inputTeclado.style.display = 'block'; // Muestra el input de texto
+            inputTeclado.focus(); // Enfoca el input para que el teclado aparezca
+        });
+
+        document.getElementById('inputTeclado').addEventListener('input', (e) => {
+            const letra = e.target.value.toUpperCase();
+            if (letras.includes(letra)) {
+                eliminarLetra(letra);
+                e.target.value = ''; // Limpiar el campo después de cada letra
+            }
         });
 
         function generarLetra() {
@@ -584,3 +623,4 @@
     </script>
 </body>
 </html>
+
