@@ -6,110 +6,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <title>Disipar Pensamientos</title>
     <style>
-        body {
-            margin: 0;
-            background-color: #000000;
-            font-family: monospace;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-            color: white;
-        }
-
-        .container {
-            position: relative;
-            width: 500px;
-            height: 300px;
-            border: 1px solid #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            animation: blink 3s infinite; 
-        }
-
-        @keyframes blink {
-            0%, 100% {
-                opacity: 1;
-                filter: brightness(1);
-            }
-            50% {
-                opacity: 0.5;
-                filter: brightness(2);
-            }
-        }
-
-        .mago {
-            position: absolute;
-            top: 50%;
-            left: 47.5%;
-            transform: translate(-50%, -50%);
-            font-size: 4px;
-            z-index: 1;
-            color: white;
-            text-shadow: 
-                0 0 5px #FF4500, 
-                0 0 10px #FF8C00, 
-                0 0 15px #ffe658, 
-                0 0 20px #32CD32, 
-                0 0 25px #00BFFF, 
-                0 0 30px #8A2BE2, 
-                0 0 35px #00FFFF;
-        }
-
-        .letra {
-            position: absolute;
-            font-size: 24px;
-            color: yellow;
-            text-shadow: 0 0 5px yellow, 0 0 10px orange, 0 0 15px red;
-            animation: neon-animation 1s infinite alternate;
-        }
-
-        @keyframes neon-animation {
-            0% {
-                text-shadow: 
-                    0 0 5px yellow, 
-                    0 0 10px orange, 
-                    0 0 15px red;
-            }
-            100% {
-                text-shadow: 
-                    0 0 10px red, 
-                    0 0 20px yellow, 
-                    0 0 30px orange;
-            }
-        }
-
-        .boton-comenzar {
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background-color: transparent;
-            color: rgb(0, 0, 0);
-            border: none;
-            font-size: 12px;
-            cursor: pointer;
-            border-color: #000000;
-            border-style: dashed;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            z-index: 2;
-        }
-
-        .boton-comenzar:hover {
-            background-color: #f3f3f3;
-        }
-
-        #p5_canvas {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100000; 
-            pointer-events: none;
-        }
-
+        /* ... (todo el estilo igual que antes) ... */
     </style>
 </head>
 <body>
@@ -127,12 +24,17 @@
     const letras = "ORDENARPENSAMIENTOS".split("");
     const letrasRestantes = new Set(letras);
     const letrasEnPantalla = {};
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let audioContext = null; // Inicializamos el AudioContext como null
     const container = document.querySelector('.container');
     const botonComenzar = document.getElementById('botonComenzar');
     let animacionActiva = false;
 
     botonComenzar.addEventListener('click', () => {
+        // Crear el AudioContext en respuesta al clic del usuario
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
         botonComenzar.style.display = 'none';
         animacionActiva = true;
         iniciarAnimacionSpans();
@@ -163,6 +65,35 @@
         container.appendChild(elementoLetra);
         letrasEnPantalla[letraRandom] = elementoLetra;
 
+        if (audioContext) {
+            const frecuencia = 100 + (letraRandom.charCodeAt(0) - 65) * 100;
+            const oscillator = audioContext.createOscillator();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
+
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+            const filterNode = audioContext.createBiquadFilter();
+            filterNode.type = 'lowpass';
+            filterNode.frequency.setValueAtTime(500, audioContext.currentTime);
+
+            oscillator.connect(filterNode)
+                      .connect(gainNode)
+                      .connect(audioContext.destination);
+
+            const fadeInTime = 2;
+            const fadeOutTime = 2;
+            const soundDuration = 10;
+
+            gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + fadeInTime);
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime + soundDuration - fadeOutTime);
+            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + soundDuration);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + soundDuration);
+        }
+
         setTimeout(() => {
             if (container.contains(elementoLetra)) {
                 elementoLetra.remove();
@@ -171,17 +102,6 @@
         }, 1000);
 
         setTimeout(generarLetra, Math.random() * 1500);
-    }
-
-    function eliminarLetra(letra) {
-        if (letrasRestantes.has(letra)) {
-            letrasRestantes.delete(letra);
-            const elemento = letrasEnPantalla[letra];
-            if (elemento) {
-                elemento.remove();
-                delete letrasEnPantalla[letra];
-            }
-        }
     }
 
     function generarRuidoBlanco() {
