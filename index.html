@@ -125,11 +125,11 @@
         }
 
         .carta {
-            width: 40px;
-            height: 65px;
+            width: 70px;
+            height: 120px;
             margin: 5px;
-            background-color: #030303;
-            border: 2px solid #ffffff;
+            background-color: #030303a9;
+            border: 2px solid #fffbc2d7;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -172,6 +172,12 @@
                 top: 80%;
             }
         }
+        .letra-press {
+    transform: scale(1.2);
+    color: rgb(206, 206, 206);
+    text-shadow: 0 0 10px rgb(45, 243, 114), 0 0 20px orange, 0 0 30px yellow;
+}
+
     </style>
 </head>
 <body>
@@ -504,16 +510,49 @@
         }
 
         function crearCasillas() {
-            const casillasContainer = document.getElementById('cartas');
-            casillasContainer.innerHTML = ''; 
-            for (let i = 1; i <= 22; i++) {
-                const casilla = document.createElement('div');
-                casilla.classList.add('carta');
-                casilla.innerText = i;
-                casilla.addEventListener('click', () => abrirVentana(i));
-                casillasContainer.appendChild(casilla);
-            }
+        const casillasContainer = document.getElementById('cartas');
+        casillasContainer.innerHTML = ''; 
+        
+        // URLs de las imágenes de portada
+        let imagenes = [
+            '1d.webp',  // Imagen para la carta 1
+            '2d.webp',  // Imagen para la carta 2
+            '3d.webp'   // Imagen para la carta 3
+        ];
+
+        // Barajar las imágenes de forma aleatoria
+        imagenes = mezclarImagenes(imagenes);
+
+        for (let i = 1; i <= 3; i++) {
+            const casilla = document.createElement('div');
+            casilla.classList.add('carta');
+            
+            // Crear la imagen de portada
+            const img = document.createElement('img');
+            img.src = imagenes[i - 1];  // Asignar la imagen aleatoria
+            img.alt = `Carta ${i}`;  // Texto alternativo
+            
+            // Ajustar la imagen al tamaño de la casilla
+            img.style.width = '100%';
+            img.style.height = '100%';  // Ahora la imagen cubre toda la casilla
+
+            // Agregar la imagen a la casilla
+            casilla.appendChild(img);
+            
+            // Añadir evento de click
+            casilla.addEventListener('click', () => abrirVentana(i));
+            casillasContainer.appendChild(casilla);
         }
+    }
+
+    // Función para barajar las imágenes
+    function mezclarImagenes(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Intercambiar
+        }
+        return array;
+    }
 
         function abrirVentana(numero) {
             if (numero === 1) {
@@ -589,6 +628,7 @@
     </script>
 </body>
 </html>
+
 
 
 
