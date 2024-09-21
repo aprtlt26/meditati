@@ -171,26 +171,6 @@
                 margin-left: 0;
                 top: 80%;
             }
-
-            /* Botón para activar teclado */
-            #inputButton {
-                display: block;
-                margin-top: 20px;
-                padding: 10px;
-                background-color: #fff;
-                border: 1px dashed #000;
-                color: black;
-                font-size: 16px;
-                cursor: pointer;
-            }
-
-            #inputTeclado {
-                display: none;
-                margin-top: 10px;
-                padding: 5px;
-                font-size: 16px;
-                border: 1px solid #ccc;
-            }
         }
     </style>
 </head>
@@ -353,14 +333,10 @@
                                                 ..............................'','''.'',;;;;,',;::,,;;;;;,'''',,;:;'',;''',,';:;;,,;:lc,';:c:;;;,':l:'...''..;:,,'.',...';;::;',;',,';c;..''....':ol,';c::c:,'';,'',,;;;;;;,'',;;,.';,'',;;;;,,,;;,,,,'';::;,,'',;;;,''.........................................           .....
                                              ................................'''....''',;,''';;;'',;,;,'....'',;;,'',,'',,'',;;,,,;:c:,',;:;;;;,.,c:'.......';,''..''...',;;;,'','''''::'........':c:,',:;::;'..,,..'',;;,,,'''',;,..','.',,,,,'',;,'''''',;;,'''.',;;,'..........................................              
                                               .....................................'',,,'.',;,'.',,,,'......'',,'.'''..'''',;,''',;::,'';;;,,,,.';:,........','''........',,,,..''.'..,:,.........':c;'.,;,;;;'..,'....',,,,,'...','...'...''',,'..',,..'...,;;,'...',,,,'............................  ............         </span>   
-    </pre>   
-            <!-- Arte ASCII completo -->
+    </pre>            <!-- Arte ASCII completo -->
             </span>
             </pre>
         </div>
-
-        <!-- Botón solo para móvil -->
-       
     </div>
 
     <div id="boxes" class="container">
@@ -394,22 +370,6 @@
             document.querySelectorAll('.mago, .letra').forEach(element => {
                 element.classList.add('no-shadow');
             });
-        });
-
-        // Mostrar input para escribir en móvil
-        document.getElementById('inputButton').addEventListener('click', () => {
-            const inputTeclado = document.getElementById('inputTeclado');
-            inputTeclado.style.display = 'block'; // Muestra el input de texto
-            inputTeclado.focus(); // Enfoca el input para que el teclado aparezca
-        });
-
-        document.getElementById('inputTeclado').addEventListener('input', (e) => {
-            const letra = e.target.value.toUpperCase();
-            if (letras.includes(letra)) {
-                eliminarLetra(letra);
-                e.target.value = ''; // Limpiar el campo después de cada letra
-                verificarLetrasRestantes(); // Verifica si se deben mostrar las cartas
-            }
         });
 
         function generarLetra() {
@@ -582,12 +542,6 @@
             return impulse;
         }
 
-        document.addEventListener('keydown', (e) => {
-            const letra = e.key.toUpperCase();
-            eliminarLetra(letra);
-            verificarLetrasRestantes(); // Verifica si se deben mostrar las cartas
-        });
-
         function iniciarAnimacionSpans() {
             const spans = document.querySelectorAll('.mago span');
             spans.forEach(span => {
@@ -632,24 +586,9 @@
             clearInterval(intervaloCambiarCaracteres);
             clearInterval(intervaloRestaurarCaracteres);
         }
-
-        // Verificar si ya no quedan letras restantes y mostrar cartas
-        function verificarLetrasRestantes() {
-            if (letrasRestantes.size === 0) {
-                mostrarCartas();
-            }
-        }
-
-        // Mostrar las cartas
-        function mostrarCartas() {
-            document.getElementById('boxes').style.display = 'flex';
-            crearCasillas(); // Generar las cartas
-        }
-
-        // Agregar evento touchstart para dispositivos móviles
-
-
     </script>
 </body>
 </html>
+
+
 
