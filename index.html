@@ -258,6 +258,69 @@ main {
 }
 
 
+
+/* ——— BOTÓN DE AYUDA (icono pregunta) ——— */
+#helpBtn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 32px;
+  height: 32px;
+  background: url('pregunta.svg') no-repeat center center;
+  background-size: contain;
+  border: 2px solid #00FFFF;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF;
+  cursor: pointer;
+  z-index: 10000;
+  transition: box-shadow 0.3s;
+}
+#helpBtn:hover {
+  box-shadow: 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+}
+
+/* ——— MODAL DE AYUDA ——— */
+#helpModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+}
+#helpModal .modal-content {
+  background: #111;
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: left;
+  box-shadow: 0 0 20px #00FFFF;
+}
+#helpModal .modal-content h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+#helpModal .modal-content p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+#helpModal .modal-close {
+  margin-top: 1rem;
+  background: #00FFFF;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#helpModal .modal-close:hover {
+  background: #66FFFF;
+}
+
+
     </style>
 </head>
 <body>
@@ -425,6 +488,25 @@ main {
         </div>
     </div>
 
+
+    <script>
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const helpBtn   = document.getElementById('helpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const helpClose = helpModal.querySelector('.modal-close');
+
+    helpBtn.addEventListener('click', () => {
+      helpModal.style.display = 'flex';
+    });
+
+    helpClose.addEventListener('click', () => {
+      helpModal.style.display = 'none';
+    });
+  });
+
+
+    </script>
     <div id="boxes" class="container">
         <div id="cartas" class="cartas">
             <!-- Las cartas se generarán dinámicamente aquí -->
@@ -720,8 +802,40 @@ closeAlert.addEventListener('click', () => {
             clearInterval(intervaloCambiarCaracteres);
             clearInterval(intervaloRestaurarCaracteres);
         }
+
+
        
     </script>
+
+ 
+
+    <!-- ——— BOTÓN DE AYUDA ——— -->
+<!-- antes: <div id="helpBtn" title="¿Qué es esto?"></div> -->
+<div id="helpBtn" title="¿Qué es esto?">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round"
+         xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12" y2="17"/>
+    </svg>
+  </div>
+  
+<!-- ——— MODAL DE AYUDA ——— -->
+<div id="helpModal">
+  <div class="modal-content">
+    <h2>Acerca de De la App</h2>
+    <p>
+      Esta es una herramienta de meditación basada en frecuencias sonoras: una terapia de estimulación cerebral.  
+      <strong>Paso 1:</strong> solo escucha las frecuencias y permite que penetren.  
+      Cuando sientas que es suficiente, escribe la frase <em>ordenar pensamientos</em> para pasar al siguiente paso.  
+      <strong>Paso 2:</strong> escoge uno de los arcanos cuyas imágenes verás a continuación.  
+      Cada arcano es un elemento audiovisual e interactivo táctil, completamente personalizable según las necesidades terapéuticas del paciente.
+    </p>
+    <button class="modal-close">Cerrar</button>
+  </div>
+</div>
+
 
      <!-- Alerta estilizada -->
   <div id="customAlert">
