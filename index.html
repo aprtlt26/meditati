@@ -231,6 +231,33 @@
 /* —————————————————————— */
 
 
+/* Asegúrate de que el <body> ocupe toda la ventana */
+    html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Estilo del footer fijo */
+.site-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #000000;       /* o el color que prefieras */
+  color: #f7f7f7;               /* contraste legible */
+  text-align: center;
+  padding: 8px 0;
+  font-size: 0.9em;
+  box-shadow: 0 -1px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+main {
+  padding-bottom: 40px; /* deja espacio suficiente para el footer */
+}
+
+
     </style>
 </head>
 <body>
@@ -698,12 +725,16 @@ closeAlert.addEventListener('click', () => {
 
      <!-- Alerta estilizada -->
   <div id="customAlert">
-    <p>When you feel it is enough, write the phrase: <strong>order thoughts</strong></p>
+    <p>When you feel it is enough, write the phrase: <strong>order thoughts</strong> </p>
     <button id="closeAlert">OK</button>
   </div>
-
+  <footer class="site-footer">
+    Alfonso Pretelt® Arte & Psique®
+  </footer>
+  
 </body>
 </html>
+
 
 
 
