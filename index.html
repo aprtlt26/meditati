@@ -691,13 +691,15 @@ closeAlert.addEventListener('click', () => {
             '1d.webp',  // Imagen para la carta 1
             '2d.webp',  // Imagen para la carta 2
             '3d.webp',   // Imagen para la carta 3
-            '4d.webp'   // Imagen para la carta 3
+            '4d.webp',  // Imagen para la carta 3
+            '5.gif',
+            '6.gif',
         ];
 
         // Barajar las imágenes de forma aleatoria
         imagenes = mezclarImagenes(imagenes);
 
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 6; i++) {
             const casilla = document.createElement('div');
             casilla.classList.add('carta');
             
@@ -737,6 +739,10 @@ closeAlert.addEventListener('click', () => {
                 window.open('https://partsound.netlify.app/', '_blank');
             } else if (numero === 4) {
                 window.open('https://subtle-gecko-095f0a.netlify.app/', '_blank');
+            } else if (numero === 5) {
+                window.open('https://soundobjetaprtlt26.netlify.app/', '_blank');
+            } else if (numero === 6) {
+                window.open('https://aprtltgranular.netlify.app/', '_blank');
             } else {
                 alert(`Has seleccionado la carta número ${numero}`);
             }
@@ -824,7 +830,7 @@ closeAlert.addEventListener('click', () => {
 <!-- ——— MODAL DE AYUDA ——— -->
 <div id="helpModal">
   <div class="modal-content">
-    <h2>Order (Touch Brain Stimulation Device)</h2>
+    <h2>Acerca de De la App</h2>
     <p>
       Esta es una herramienta de meditación basada en frecuencias sonoras: una terapia de estimulación cerebral.  
       <strong>Paso 1:</strong> solo escucha las frecuencias y permite que penetren.  
@@ -848,6 +854,7 @@ closeAlert.addEventListener('click', () => {
   
 </body>
 </html>
+
 
 
 
