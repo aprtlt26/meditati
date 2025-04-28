@@ -196,6 +196,41 @@
     text-shadow: 0 0 10px rgb(45, 243, 114), 0 0 20px orange, 0 0 30px yellow;
 }
 
+
+/* ——— ALERTA ESTILIZADA ——— */
+#customAlert {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30, 30, 30, 0.95);
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+  z-index: 9999;
+  text-align: center;
+}
+#customAlert p {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+#customAlert button {
+  background: #ffe658;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#customAlert button:hover {
+  background: #ffd700;
+}
+/* —————————————————————— */
+
+
     </style>
 </head>
 <body>
@@ -382,6 +417,16 @@
         let intervaloRestaurarCaracteres;
 
         botonComenzar.addEventListener('click', () => {
+
+            // muestra la alerta y espera a que el usuario la cierre
+const customAlert = document.getElementById('customAlert');
+const closeAlert = document.getElementById('closeAlert');
+customAlert.style.display = 'flex';
+closeAlert.addEventListener('click', () => {
+  customAlert.style.display = 'none';
+  // aquí continúa el resto de tu lógica de "Comenzar"...
+});
+
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
@@ -395,6 +440,7 @@
                 element.classList.add('no-shadow');
             });
         });
+
 
         function generarLetra() {
             if (letrasRestantes.size === 0) {
@@ -647,7 +693,15 @@
             clearInterval(intervaloCambiarCaracteres);
             clearInterval(intervaloRestaurarCaracteres);
         }
+       
     </script>
+
+     <!-- Alerta estilizada -->
+  <div id="customAlert">
+    <p>When you feel it is enough, write the phrase: <strong>order thoughts</strong></p>
+    <button id="closeAlert">OK</button>
+  </div>
+
 </body>
 </html>
 
