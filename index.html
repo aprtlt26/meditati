@@ -43,6 +43,7 @@
         }
 
         .container {
+            top: 120px;
             position: relative;
             width: 500px;
             height: 500px;
@@ -55,7 +56,6 @@
 
         .mago {
             position: absolute;
-            top: -80%;
             left: 45%;
             transform: translate(-50%, -50%);
             font-size: 5px;
@@ -99,7 +99,7 @@
         }
 
         .boton-comenzar {
-            margin-top: 100px;
+            margin-top: -1000px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -168,7 +168,7 @@
         }
 
         /* Optimizaciones para móvil */
-        @media screen and (max-width: 600px) {
+        @media screen and (max-width: 200px) {
             .container {
                 width: 90%;
                 height: auto;
@@ -183,7 +183,7 @@
             }
 
             .boton-comenzar {
-                font-size: 10px;
+                font-size: 12px;
                 padding: 8px 15px;
                 margin-left: -120px;
             }
@@ -373,6 +373,40 @@ main {
   background: #664ae2;
 }
 
+@media screen and (max-width: 600px) {
+  .container {
+    width: 90%;
+    height: auto;
+    margin: 1px auto;
+  }
+  .letra {
+    font-size: 20px;
+  }
+  
+  .boton-comenzar {
+    padding: 8px 16px;
+    margin: 1px auto;
+    margin-top: -900px;
+  }
+  .carta {
+    width: 40px;
+    height: 80px;
+  }
+  #boxes {
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  h1 {
+    font-size: 1.5em;
+  }
+  p {
+    font-size: 1em;
+  }
+  .mago{
+    margin: -10px auto;
+  }
+}
 
     </style>
 </head>
@@ -905,6 +939,11 @@ document.addEventListener('keydown', function(event) {
   
 </body>
 </html>
+
+
+
+
+
 
 
 
