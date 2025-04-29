@@ -29,7 +29,9 @@
         body {
             margin: 0;
             background-color: #000000;
-            font-family:  'Cormorant Garamond', serif;;
+            body {
+  font-family: 'Noto Sans Hebrew', monospace;
+}
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,23 +76,23 @@
         }
 
         .letra {
-            position: absolute;
-            font-size: 24px;
-            color: yellow;
-            text-shadow: 0 0 5px yellow, 0 0 10px orange, 0 0 15px red;
+            position: fixed;
+            font-size: 34px;
+            color: rgb(234, 234, 230);
+            text-shadow: 0 0 5px yellow, 0 0 10px orange, 0 0 15px rgb(231, 229, 228),0 0 10px rgb(183, 180, 176);
             animation: neon-animation 1s infinite alternate;
         }
 
         @keyframes neon-animation {
             0% {
                 text-shadow: 
-                    0 0 5px yellow, 
+                    0 0 5px rgba(255, 255, 0, 0.827), 
                     0 0 10px orange, 
-                    0 0 15px red;
+                    0 0 15px rgb(241, 241, 241);
             }
             100% {
                 text-shadow: 
-                    0 0 10px red, 
+                    0 0 10px rgb(205, 202, 202), 
                     0 0 20px yellow, 
                     0 0 30px orange;
             }
@@ -197,7 +199,7 @@
             }
         }
         .letra-press {
-    transform: scale(1.2);
+    transform: scale(1.5);
     color: rgb(206, 206, 206);
     text-shadow: 0 0 10px rgb(45, 243, 114), 0 0 20px orange, 0 0 30px yellow;
 }
@@ -218,7 +220,7 @@ h1 {
 
   p{
     font-family: 'Cormorant Garamond', serif; /* elegante y mística */
-    font-size: 1.5em;
+    font-size: 1.9em;
     letter-spacing: 0.1em;
     color: #f5f5f5; /* blanco perla */
     text-shadow: 
@@ -246,7 +248,7 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(108, 106, 106, 0.95);
+  background: linear-gradient(120deg, #a9dbf187, #5a5a5e51);
   color: #0f0f0f;
   padding: 1.5rem;
   border-radius: 8px;
@@ -292,7 +294,9 @@ h1 {
   left: 0;
   width: 100%;
   background: #000000;       /* o el color que prefieras */
-  color: #f7f7f7;               /* contraste legible */
+  color: #313131;    
+  font-family:'Noto Sans Hebrew', monospace;
+  font-size: 3px;
   text-align: center;
   padding: 8px 0;
   font-size: 0.9em;
@@ -567,7 +571,7 @@ main {
 
     <script>
         // Variables globales
-        const letras = "ORDENARPENSAMIENTOS".split("");
+        const letras = "אבגדהוזחטיכלמנסעפצקרשת".split("");
         const letrasRestantes = new Set(letras);
         const letrasEnPantalla = {};
         const container = document.querySelector('.container');
@@ -576,294 +580,258 @@ main {
         let audioContext;
         let intervaloCambiarCaracteres;
         let intervaloRestaurarCaracteres;
-
+      
         botonComenzar.addEventListener('click', () => {
-
-            // muestra la alerta y espera a que el usuario la cierre
-const customAlert = document.getElementById('customAlert');
-const closeAlert = document.getElementById('closeAlert');
-customAlert.style.display = 'flex';
-closeAlert.addEventListener('click', () => {
-  customAlert.style.display = 'none';
-  // aquí continúa el resto de tu lógica de "Comenzar"...
-});
-
+          // Mostrar alerta
+          const customAlert = document.getElementById('customAlert');
+          const closeAlert = document.getElementById('closeAlert');
+          customAlert.style.display = 'flex';
+          closeAlert.addEventListener('click', () => {
+            customAlert.style.display = 'none';
+            // Una vez cerrada la alerta, inicia todo:
             if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+              audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
-
             botonComenzar.style.display = 'none';
             animacionActiva = true;
             iniciarAnimacionSpans();
             generarLetra();
-
-            document.querySelectorAll('.mago, .letra').forEach(element => {
-                element.classList.add('no-shadow');
-            });
+            document.querySelectorAll('.mago, .letra').forEach(el => el.classList.add('no-shadow'));
+          });
         });
-
-
+      
         function generarLetra() {
-            if (letrasRestantes.size === 0) {
-                detenerAnimacionYRestaurarDibujo();
-                generarRuidoBlanco();
-                return;
+          if (letrasRestantes.size === 0) {
+            detenerAnimacionYRestaurarDibujo();
+            generarRuidoBlanco();
+            return;
+          }
+      
+          const letraArray = Array.from(letrasRestantes);
+          const letraRandom = letraArray[Math.floor(Math.random() * letraArray.length)];
+          const elementoLetra = document.createElement('div');
+          elementoLetra.classList.add('letra');
+      
+          // Posición aleatoria
+          const angle = Math.random() * Math.PI;
+          const radius = 20 + Math.random() * 80;
+          const x = 50 + Math.cos(angle) * radius;
+          const y = 30 + Math.sin(angle) * radius;
+          elementoLetra.style.top = `${y}%`;
+          elementoLetra.style.left = `${x}%`;
+          elementoLetra.innerText = letraRandom;
+          container.appendChild(elementoLetra);
+          letrasEnPantalla[letraRandom] = elementoLetra;
+      
+          // Teclado y touch
+          document.addEventListener('keydown', (e) => {
+            if (letrasRestantes.has(e.key)) eliminarLetra(e.key);
+          });
+          elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
+      
+          // Mapeo de frecuencia por índice en el array de letras hebreas
+          const idx = letras.indexOf(letraRandom);    // 0–26
+          const base = 200;                           // frecuencia mínima
+          const paso = 100;                           // incremento por letra
+          const frecuencia = base + idx * paso;
+      
+          // Generar sonido
+          const oscillator = audioContext.createOscillator();
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
+          const gainNode = audioContext.createGain();
+          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+          const filterNode = audioContext.createBiquadFilter();
+          filterNode.type = 'lowpass';
+          filterNode.frequency.setValueAtTime(500, audioContext.currentTime);
+          const delayNode = audioContext.createDelay();
+          delayNode.delayTime.value = 0.5;
+          const reverb = audioContext.createConvolver();
+          reverb.buffer = createReverbBuffer(audioContext);
+      
+          oscillator
+            .connect(filterNode)
+            .connect(delayNode)
+            .connect(reverb)
+            .connect(gainNode)
+            .connect(audioContext.destination);
+      
+          const fadeInTime = 2;
+          const fadeOutTime = 2;
+          const soundDuration = 10;
+          gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + fadeInTime);
+          gainNode.gain.setValueAtTime(0.05, audioContext.currentTime + soundDuration - fadeOutTime);
+          gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + soundDuration);
+      
+          oscillator.start();
+          oscillator.stop(audioContext.currentTime + soundDuration);
+      
+          // Eliminar letra tras 1s
+          setTimeout(() => {
+            if (container.contains(elementoLetra)) {
+              elementoLetra.remove();
+              delete letrasEnPantalla[letraRandom];
             }
-
-            const letraArray = Array.from(letrasRestantes);
-            const letraRandom = letraArray[Math.floor(Math.random() * letraArray.length)];
-            const elementoLetra = document.createElement('div');
-            elementoLetra.classList.add('letra');
-
-            const angle = Math.random() * Math.PI;
-            const radius = 20 + Math.random() * 80;
-            const x = 50 + Math.cos(angle) * radius;
-            const y = 30 + Math.sin(angle) * radius;
-
-            elementoLetra.style.top = `${y}%`;
-            elementoLetra.style.left = `${x}%`;
-            elementoLetra.innerText = letraRandom;
-
-            container.appendChild(elementoLetra);
-
-            letrasEnPantalla[letraRandom] = elementoLetra;
-
-            // Evento para eliminar letra con teclado
-            document.addEventListener('keydown', (e) => {
-                const letra = e.key.toUpperCase();
-                eliminarLetra(letra);
-            });
-
-            // Evento para eliminar letra con touch en móvil
-            elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
-
-            // Sonido de la letra
-            const frecuencia = 100 + (letraRandom.charCodeAt(0) - 95) * 100;
-            const oscillator = audioContext.createOscillator();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
-
-            const gainNode = audioContext.createGain();
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-
-            const filterNode = audioContext.createBiquadFilter();
-            filterNode.type = 'lowpass';
-            filterNode.frequency.setValueAtTime(500, audioContext.currentTime);
-
-            const delayNode = audioContext.createDelay();
-            delayNode.delayTime.value = 0.5;
-
-            const reverb = audioContext.createConvolver();
-            reverb.buffer = createReverbBuffer(audioContext);
-
-            oscillator.connect(filterNode)
-                .connect(delayNode)
-                .connect(reverb)
-                .connect(gainNode)
-                .connect(audioContext.destination);
-
-            const fadeInTime = 2; 
-            const fadeOutTime = 2; 
-            const soundDuration = 10; 
-
-            gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + fadeInTime); 
-            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime + soundDuration - fadeOutTime); 
-            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + soundDuration); 
-
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + soundDuration);
-
-            setTimeout(() => {
-                if (container.contains(elementoLetra)) {
-                    elementoLetra.remove();
-                    delete letrasEnPantalla[letraRandom];
-                }
-            }, 1000);
-
-            setTimeout(generarLetra, Math.random() * 1000);
+          }, 1000);
+      
+          // Próxima letra
+          setTimeout(generarLetra, Math.random() * 1000);
         }
-
+      
         function eliminarLetra(letra) {
-            if (letrasRestantes.has(letra)) {
-                letrasRestantes.delete(letra);
-                const elemento = letrasEnPantalla[letra];
-                if (elemento) {
-                    elemento.remove();
-                    delete letrasEnPantalla[letra];
-                }
+          if (letrasRestantes.has(letra)) {
+            letrasRestantes.delete(letra);
+            const elemento = letrasEnPantalla[letra];
+            if (elemento) {
+              elemento.remove();
+              delete letrasEnPantalla[letra];
             }
+          }
         }
-
+      
         function generarRuidoBlanco() {
-            const bufferSize = 2 * audioContext.sampleRate;
-            const ruidoBlanco = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-            const data = ruidoBlanco.getChannelData(0);
-
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-
-            const whiteNoise = audioContext.createBufferSource();
-            whiteNoise.buffer = ruidoBlanco;
-            whiteNoise.loop = true;
-
-            const filter = audioContext.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.value = 500;
-
-            const gainNode = audioContext.createGain();
-            gainNode.gain.value = 0.05;
-
-            const reverb = audioContext.createConvolver();
-            reverb.buffer = createReverbBuffer(audioContext);
-
-            whiteNoise.connect(filter).connect(reverb).connect(gainNode).connect(audioContext.destination);
-
-            whiteNoise.start(0);
-
-            document.getElementById('boxes').style.display = 'flex';
-            crearCasillas();
-
-            function pulso() {
-                gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 2);
-                gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 4);
-            }
-
-            pulso();
-            setInterval(pulso, 4000);
+          const bufferSize = 2 * audioContext.sampleRate;
+          const ruidoBlanco = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+          const data = ruidoBlanco.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      
+          const whiteNoise = audioContext.createBufferSource();
+          whiteNoise.buffer = ruidoBlanco;
+          whiteNoise.loop = true;
+          const filter = audioContext.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = 500;
+          const gainNode = audioContext.createGain();
+          gainNode.gain.value = 0.05;
+          const reverb = audioContext.createConvolver();
+          reverb.buffer = createReverbBuffer(audioContext);
+      
+          whiteNoise
+            .connect(filter)
+            .connect(reverb)
+            .connect(gainNode)
+            .connect(audioContext.destination);
+      
+          whiteNoise.start(0);
+          document.getElementById('boxes').style.display = 'flex';
+          crearCasillas();
+      
+          function pulso() {
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 2);
+            gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 4);
+          }
+          pulso();
+          setInterval(pulso, 4000);
         }
-
+      
         function crearCasillas() {
-        const casillasContainer = document.getElementById('cartas');
-        casillasContainer.innerHTML = ''; 
-        
-        // URLs de las imágenes de portada
-        let imagenes = [
-            '1d.webp',  // Imagen para la carta 1
-            '2d.webp',  // Imagen para la carta 2
-            '3d.webp',   // Imagen para la carta 3
-            '4d.webp',  // Imagen para la carta 3
+          const casillasContainer = document.getElementById('cartas');
+          casillasContainer.innerHTML = '';
+          let imagenes = [
+            '1d.webp',
+            '2d.webp',
+            '3d.webp',
+            '4d.webp',
             '5.gif',
             '6.gif',
-        ];
-
-        // Barajar las imágenes de forma aleatoria
-        imagenes = mezclarImagenes(imagenes);
-
-        for (let i = 1; i <= 6; i++) {
+            '7.gif'
+          ];
+          imagenes = mezclarImagenes(imagenes);
+          imagenes.forEach((src, i) => {
             const casilla = document.createElement('div');
             casilla.classList.add('carta');
-            
-            // Crear la imagen de portada
             const img = document.createElement('img');
-            img.src = imagenes[i - 1];  // Asignar la imagen aleatoria
-            img.alt = `Carta ${i}`;  // Texto alternativo
-            
-            // Ajustar la imagen al tamaño de la casilla
+            img.src = src;
+            img.alt = `Carta ${i + 1}`;
             img.style.width = '100%';
-            img.style.height = '100%';  // Ahora la imagen cubre toda la casilla
-
-            // Agregar la imagen a la casilla
+            img.style.height = '100%';
             casilla.appendChild(img);
-            
-            // Añadir evento de click
-            casilla.addEventListener('click', () => abrirVentana(i));
+            casilla.addEventListener('click', () => abrirVentana(i + 1));
             casillasContainer.appendChild(casilla);
+          });
         }
-    }
-
-    // Función para barajar las imágenes
-    function mezclarImagenes(array) {
-        for (let i = array.length - 1; i > 0; i--) {
+      
+        function mezclarImagenes(array) {
+          for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Intercambiar
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
         }
-        return array;
-    }
-
+      
         function abrirVentana(numero) {
-            if (numero === 1) {
-                window.open('https://part33.netlify.app/', '_blank');
-            } else if (numero === 2) {
-                window.open('https://ambientbronz.netlify.app/', '_blank');
-            } else if (numero === 3) {
-                window.open('https://partsound.netlify.app/', '_blank');
-            } else if (numero === 4) {
-                window.open('https://subtle-gecko-095f0a.netlify.app/', '_blank');
-            } else if (numero === 5) {
-                window.open('https://soundobjetaprtlt26.netlify.app/', '_blank');
-            } else if (numero === 6) {
-                window.open('https://aprtltgranular.netlify.app/', '_blank');
-            } else {
-                alert(`Has seleccionado la carta número ${numero}`);
-            }
-            
+          const urls = [
+            'https://part33.netlify.app/',
+            'https://ambientbronz.netlify.app/',
+            'https://partsound.netlify.app/',
+            'https://subtle-gecko-095f0a.netlify.app/',
+            'https://soundobjetaprtlt26.netlify.app/',
+            'https://aprtltgranular.netlify.app/',
+            'https://aprtltgranular.netlify.app/'
+          ];
+          if (numero >= 1 && numero <= urls.length) {
+            window.open(urls[numero - 1], '_blank');
+          } else {
+            alert(`Has seleccionado la carta número ${numero}`);
+          }
         }
-
+      
         function createReverbBuffer(context) {
-            const length = context.sampleRate * 3;
-            const impulse = context.createBuffer(2, length, context.sampleRate);
-            const impulseL = impulse.getChannelData(0);
-            const impulseR = impulse.getChannelData(1);
-
-            for (let i = 0; i < length; i++) {
-                const n = length - i;
-                impulseL[i] = (Math.random() * 2 - 1) * (n / length);
-                impulseR[i] = (Math.random() * 2 - 1) * (n / length);
-            }
-
-            return impulse;
+          const length = context.sampleRate * 3;
+          const impulse = context.createBuffer(2, length, context.sampleRate);
+          const impulseL = impulse.getChannelData(0);
+          const impulseR = impulse.getChannelData(1);
+          for (let i = 0; i < length; i++) {
+            const n = length - i;
+            impulseL[i] = (Math.random() * 2 - 1) * (n / length);
+            impulseR[i] = (Math.random() * 2 - 1) * (n / length);
+          }
+          return impulse;
         }
-
+      
         function iniciarAnimacionSpans() {
-            const spans = document.querySelectorAll('.mago span');
-            spans.forEach(span => {
-                span.setAttribute('data-original-text', span.innerText);
-            });
-            intervaloCambiarCaracteres = setInterval(cambiarCaracteres, 1000);
+          const spans = document.querySelectorAll('.mago span');
+          spans.forEach(span => {
+            span.setAttribute('data-original-text', span.innerText);
+          });
+          intervaloCambiarCaracteres = setInterval(cambiarCaracteres, 1000);
         }
-
+      
         function cambiarCaracteres() {
-            if (!animacionActiva) return;
-
-            const spans = document.querySelectorAll('.mago span');
-
-            spans.forEach(span => {
-                const textoOriginal = span.getAttribute('data-original-text');
-                let nuevoTexto = '';
-
-                for (let i = 0; i < textoOriginal.length; i++) {
-                    if (Math.random() > 0.7) {
-                        nuevoTexto += String.fromCharCode(33 + Math.floor(Math.random() * 94));
-                    } else {
-                        nuevoTexto += textoOriginal[i];
-                    }
-                }
-
-                span.innerText = nuevoTexto;
-                span.style.textShadow = "0 0 30px white";
-            });
+          if (!animacionActiva) return;
+          const spans = document.querySelectorAll('.mago span');
+          spans.forEach(span => {
+            const textoOriginal = span.getAttribute('data-original-text');
+            let nuevoTexto = '';
+            for (let i = 0; i < textoOriginal.length; i++) {
+              if (Math.random() > 0.7) {
+                // caracter hebreo aleatorio
+                const code = 0x05D0 + Math.floor(Math.random() * (0x05EA - 0x05D0 + 1));
+                nuevoTexto += String.fromCharCode(code);
+              } else {
+                nuevoTexto += textoOriginal[i];
+              }
+            }
+            span.innerText = nuevoTexto;
+            span.style.textShadow = "0 0 30px white";
+          });
         }
-
+      
         function detenerAnimacionYRestaurarDibujo() {
-            animacionActiva = false;
-
-            const spans = document.querySelectorAll('.mago span');
-            spans.forEach(span => {
-                const textoOriginal = span.getAttribute('data-original-text');
-                span.innerText = textoOriginal;
-
-                span.style.textShadow = "0 0 5px #FF4500, 0 0 10px #FF8C00, 0 0 15px #FFD700, 0 0 20px #32CD32, 0 0 25px #00BFFF, 0 0 30px #8A2BE2, 0 0 35px #00FFFF"; 
-            });
-
-            clearInterval(intervaloCambiarCaracteres);
-            clearInterval(intervaloRestaurarCaracteres);
+          animacionActiva = false;
+          const spans = document.querySelectorAll('.mago span');
+          spans.forEach(span => {
+            const textoOriginal = span.getAttribute('data-original-text');
+            span.innerText = textoOriginal;
+            span.style.textShadow =
+              "0 0 5px #FF4500, 0 0 10px #FF8C00, 0 0 15px #FFD700, 0 0 20px #32CD32, 0 0 25px #00BFFF, 0 0 30px #8A2BE2, 0 0 35px #00FFFF";
+          });
+          clearInterval(intervaloCambiarCaracteres);
+          clearInterval(intervaloRestaurarCaracteres);
         }
-
-
-       
-    </script>
+      </script>
+      
 
 <script>
 
@@ -911,10 +879,11 @@ document.addEventListener('keydown', function(event) {
   <div class="modal-content">
     <h2>Atziluth (Dispositivo Touch de Estimulación Cerebral)</h2>
     <p>
-      Herramienta de meditación basada en frecuencias sonoras: Terapia de estimulación cerebral.  
-      <strong>Paso 1:</strong> solo escucha las frecuencias y permite que penetren.  
-      Cuando sientas que es suficiente, escribe la frase <em>ordenar pensamientos</em> para pasar al siguiente paso.  
-      <strong>Paso 2:</strong> escoge uno de los arcanos cuyas imágenes verás a continuación.  
+      Herramienta de meditación basada en frecuencias sonoras: Terapia de estimulación cerebral.   
+      <strong>PASO 1:</strong> solo escucha las frecuencias y permite que penetren.  
+      Cuando sientas que es suficiente, escribe la frase:
+    <em>ordenar pensamientos</em>para pasar al siguiente paso.  
+      <strong>PASO 2::</strong> escoge uno de los arcanos cuyas imágenes verás a continuación.  
       Cada arcano es un elemento audiovisual e interactivo táctil, completamente personalizable según las necesidades terapéuticas del paciente.
     </p>
 
@@ -936,6 +905,11 @@ document.addEventListener('keydown', function(event) {
   
 </body>
 </html>
+
+
+
+
+
 
 
 
