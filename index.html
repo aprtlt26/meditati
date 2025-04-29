@@ -358,7 +358,7 @@ main {
 #helpModal .modal-close {
   margin-top: 2rem;
   background: linear-gradient(120deg, #85869e, #dedee2);
-  color: #c1c1c1;
+  color: #000000;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -541,7 +541,6 @@ main {
         </div>
     </div>
 
-
     <script>
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -568,8 +567,7 @@ main {
 
     <script>
         // Variables globales
-        const letras = "אבגדהוזחטיכלמנסעפצקרשת".split("");
-
+        const letras = "ORDENARPENSAMIENTOS".split("");
         const letrasRestantes = new Set(letras);
         const letrasEnPantalla = {};
         const container = document.querySelector('.container');
@@ -748,14 +746,12 @@ closeAlert.addEventListener('click', () => {
             '4d.webp',  // Imagen para la carta 3
             '5.gif',
             '6.gif',
-            '7.gif',
-
         ];
 
         // Barajar las imágenes de forma aleatoria
         imagenes = mezclarImagenes(imagenes);
 
-        for (let i = 1; i <= 7; i++) {
+        for (let i = 1; i <= 6; i++) {
             const casilla = document.createElement('div');
             casilla.classList.add('carta');
             
@@ -799,9 +795,6 @@ closeAlert.addEventListener('click', () => {
                 window.open('https://soundobjetaprtlt26.netlify.app/', '_blank');
             } else if (numero === 6) {
                 window.open('https://aprtltgranular.netlify.app/', '_blank');
-            } else if (numero === 7) {
-                window.open('https://aprtltgranular.netlify.app/', '_blank');
-            
             } else {
                 alert(`Has seleccionado la carta número ${numero}`);
             }
@@ -869,7 +862,12 @@ closeAlert.addEventListener('click', () => {
         }
 
 
-        let fraseEscrita = "";  // Aquí se va almacenando lo que el usuario escribe
+       
+    </script>
+
+<script>
+
+let fraseEscrita = "";  // Aquí se va almacenando lo que el usuario escribe
 
 document.addEventListener('keydown', function(event) {
     if (!animacionActiva) return; // Solo escuchar mientras está activo el glitch
@@ -894,11 +892,8 @@ document.addEventListener('keydown', function(event) {
         crearCasillas();
     }
 });
-
-       
-    </script>
-
-
+</script>
+ 
 
 
 <div id="helpBtn" title="¿Qué es esto?">
@@ -941,8 +936,6 @@ document.addEventListener('keydown', function(event) {
   
 </body>
 </html>
-
-
 
 
 
