@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-   <!DOCTYPE html>
-<html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
@@ -124,44 +123,50 @@
             background-color: #d9e255;
         }
 
-        #boxes {
-            display: none;
-            flex-direction: column;
-            position: absolute;
-            align-items: center;
-            justify-content: center;
-            top: 70%;
-            transform: translate(-50%, -50%);
-            font-size: 4px;
-            z-index: 1;
-            margin-left: 600px;
-            border: none;
-        }
+       /* Centrar el contenedor en pantalla y disponerlo en fila */
+#boxes {
+  display: none;              /* lo activas desde JS cuando toque */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-45%, -50%);
+  display: flex;              /* contenedor flex */
+  flex-direction: row;        /* en fila */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;                  /* espacio entre cartas */
+  padding: 10px;              /* opcional, para un pequeño margen interior */
+  background: transparent;    /* o lo que quieras */
+  z-index: 1;
+  border: none;
+}
 
-        .cartas {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-        }
+/* Dentro de #boxes ya no hace falta posicionado absoluto ni flex-wrap */
+.cartas {
+  display: flex;
+  flex-wrap: nowrap;  
+  margin-top: 70%;        /* ¡nunca envuelve! */
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
 
-        .carta {
-            width: 70px;
-            height: 120px;
-            margin: 5px;
-            background-color: #030303a9;
-            border: 2px solid #fffbc2d7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: background-color 0.1s;
-        }
+/* Ajusta un poco el tamaño / margen si hace falta */
+.carta {
+  flex: 0 0 auto;             /* no crece, no encoge */
+  width: 70px;
+  height: 120px;
+  margin: 0;                  /* el `gap` de #boxes se encarga del espacio */
+  background-color: #030303a9;
+  border: 2px solid #fffbc2d7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
 
         .carta:hover {
             background-color: #88888844;
@@ -576,55 +581,60 @@ main {
     </pre>            <!-- Arte ASCII completo -->
             </span>
             </pre>
-        </div>
-    </div>
-
-    <script>
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const helpBtn   = document.getElementById('helpBtn');
-    const helpModal = document.getElementById('helpModal');
-    const helpClose = helpModal.querySelector('.modal-close');
-
-    helpBtn.addEventListener('click', () => {
-      helpModal.style.display = 'flex';
-    });
-
-    helpClose.addEventListener('click', () => {
-      helpModal.style.display = 'none';
-    });
-  });
 
 
-    </script>
     <div id="boxes" class="container">
         <div id="cartas" class="cartas">
             <!-- Las cartas se generarán dinámicamente aquí -->
         </div>
     </div>
-
+        </div>
+    </div>
     <script>
-        // Variables globales
-        const letras = "אבגדהוזחטיכלמנסעפצקרשת".split("");
-        const letrasRestantes = new Set(letras);
-        const letrasEnPantalla = {};
-        const container = document.querySelector('.container');
-        const botonComenzar = document.getElementById('botonComenzar');
-        let animacionActiva = false;
-        let audioContext;
-        let intervaloCambiarCaracteres;
-        let intervaloRestaurarCaracteres;
-      
-        botonComenzar.addEventListener('click', () => {
-          // Mostrar alerta
-          const customAlert = document.getElementById('customAlert');
-          const closeAlert = document.getElementById('closeAlert');
-          customAlert.style.display = 'flex';
+        window.addEventListener('DOMContentLoaded', () => {
+          // ——— GLOBAL VARIABLES ———
+          const letras = "אבגדהוזחטיכלמנסעפצקרשת".split("");
+          const letrasRestantes = new Set(letras);
+          const letrasEnPantalla = {};
+          const container = document.querySelector('.container');
+          const botonComenzar = document.getElementById('botonComenzar');
+          const customAlert   = document.getElementById('customAlert');
+          const closeAlert    = document.getElementById('closeAlert');
+          const helpBtn       = document.getElementById('helpBtn');
+          const helpModal     = document.getElementById('helpModal');
+          const helpClose     = helpModal.querySelector('.modal-close');
+          let animacionActiva = false;
+          let audioContext, masterGain, compressor, noiseBuffer;
+          let intervaloCambiarCaracteres, intervaloRestaurarCaracteres;
+        
+          // ——— HELP MODAL HANDLERS ———
+          helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
+          helpClose.addEventListener('click', () => helpModal.style.display = 'none');
+        
+          // ——— START BUTTON ———
+          botonComenzar.addEventListener('click', () => customAlert.style.display = 'flex');
+        
           closeAlert.addEventListener('click', () => {
             customAlert.style.display = 'none';
-            // Una vez cerrada la alerta, inicia todo:
             if (!audioContext) {
               audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+              // ——— MASTER GAIN + COMPRESSOR ———
+              masterGain = audioContext.createGain();
+              masterGain.gain.setValueAtTime(0.05, audioContext.currentTime);
+              compressor = audioContext.createDynamicsCompressor();
+              compressor.threshold.setValueAtTime(-24, audioContext.currentTime);
+              compressor.knee.setValueAtTime(30, audioContext.currentTime);
+              compressor.ratio.setValueAtTime(8, audioContext.currentTime);
+              compressor.attack.setValueAtTime(0.01, audioContext.currentTime);
+              compressor.release.setValueAtTime(0.1, audioContext.currentTime);
+              masterGain.connect(compressor);
+              compressor.connect(audioContext.destination);
+        
+              // ——— PREGENERATE WHITE NOISE BUFFER ———
+              noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
+              const nbData = noiseBuffer.getChannelData(0);
+              for (let i = 0; i < nbData.length; i++) nbData[i] = Math.random() * 2 - 1;
             }
             botonComenzar.style.display = 'none';
             animacionActiva = true;
@@ -632,269 +642,247 @@ main {
             generarLetra();
             document.querySelectorAll('.mago, .letra').forEach(el => el.classList.add('no-shadow'));
           });
-        });
-      
-        function generarLetra() {
-          if (letrasRestantes.size === 0) {
-            detenerAnimacionYRestaurarDibujo();
-            generarRuidoBlanco();
-            return;
-          }
-      
-          const letraArray = Array.from(letrasRestantes);
-          const letraRandom = letraArray[Math.floor(Math.random() * letraArray.length)];
-          const elementoLetra = document.createElement('div');
-          elementoLetra.classList.add('letra');
-      
-          // Posición aleatoria
-          const angle = Math.random() * Math.PI;
-          const radius = 20 + Math.random() * 80;
-          const x = 50 + Math.cos(angle) * radius;
-          const y = 30 + Math.sin(angle) * radius;
-          elementoLetra.style.top = `${y}%`;
-          elementoLetra.style.left = `${x}%`;
-          elementoLetra.innerText = letraRandom;
-          container.appendChild(elementoLetra);
-          letrasEnPantalla[letraRandom] = elementoLetra;
-      
-          // Teclado y touch
-          document.addEventListener('keydown', (e) => {
-            if (letrasRestantes.has(e.key)) eliminarLetra(e.key);
-          });
-          elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
-      
-          // Mapeo de frecuencia por índice en el array de letras hebreas
-          const idx = letras.indexOf(letraRandom);    // 0–26
-          const base = 200;                           // frecuencia mínima
-          const paso = 100;                           // incremento por letra
-          const frecuencia = base + idx * paso;
-      
-          // Generar sonido
-          const oscillator = audioContext.createOscillator();
-          oscillator.type = 'sine';
-          oscillator.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
-          const gainNode = audioContext.createGain();
-          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-          const filterNode = audioContext.createBiquadFilter();
-          filterNode.type = 'lowpass';
-          filterNode.frequency.setValueAtTime(500, audioContext.currentTime);
-          const delayNode = audioContext.createDelay();
-          delayNode.delayTime.value = 0.5;
-          const reverb = audioContext.createConvolver();
-          reverb.buffer = createReverbBuffer(audioContext);
-      
-          oscillator
-            .connect(filterNode)
-            .connect(delayNode)
-            .connect(reverb)
-            .connect(gainNode)
-            .connect(audioContext.destination);
-      
-          const fadeInTime = 2;
-          const fadeOutTime = 2;
-          const soundDuration = 10;
-          gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + fadeInTime);
-          gainNode.gain.setValueAtTime(0.05, audioContext.currentTime + soundDuration - fadeOutTime);
-          gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + soundDuration);
-      
-          oscillator.start();
-          oscillator.stop(audioContext.currentTime + soundDuration);
-      
-          // Eliminar letra tras 1s
-          setTimeout(() => {
-            if (container.contains(elementoLetra)) {
-              elementoLetra.remove();
-              delete letrasEnPantalla[letraRandom];
+        
+          // ——— GENERATE LETTERS ———
+          function generarLetra() {
+            if (letrasRestantes.size === 0) {
+              detenerAnimacionYRestaurarDibujo();
+              generarRuidoBlanco();
+              return;
             }
-          }, 1000);
-      
-          // Próxima letra
-          setTimeout(generarLetra, Math.random() * 1000);
-        }
-      
-        function eliminarLetra(letra) {
-          if (letrasRestantes.has(letra)) {
-            letrasRestantes.delete(letra);
-            const elemento = letrasEnPantalla[letra];
-            if (elemento) {
-              elemento.remove();
-              delete letrasEnPantalla[letra];
-            }
-          }
-        }
-      
-        function generarRuidoBlanco() {
-          const bufferSize = 2 * audioContext.sampleRate;
-          const ruidoBlanco = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-          const data = ruidoBlanco.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      
-          const whiteNoise = audioContext.createBufferSource();
-          whiteNoise.buffer = ruidoBlanco;
-          whiteNoise.loop = true;
-          const filter = audioContext.createBiquadFilter();
-          filter.type = 'lowpass';
-          filter.frequency.value = 500;
-          const gainNode = audioContext.createGain();
-          gainNode.gain.value = 0.05;
-          const reverb = audioContext.createConvolver();
-          reverb.buffer = createReverbBuffer(audioContext);
-      
-          whiteNoise
-            .connect(filter)
-            .connect(reverb)
-            .connect(gainNode)
-            .connect(audioContext.destination);
-      
-          whiteNoise.start(0);
-          document.getElementById('boxes').style.display = 'flex';
-          crearCasillas();
-      
-          function pulso() {
-            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 2);
-            gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 4);
-          }
-          pulso();
-          setInterval(pulso, 4000);
-        }
-      
-        function crearCasillas() {
-          const casillasContainer = document.getElementById('cartas');
-          casillasContainer.innerHTML = '';
-          let imagenes = [
-            '1d.webp',
-            '2d.webp',
-            '3d.webp',
-            '4d.webp',
-            '5.gif',
-            '6.gif',
-            '7.gif'
-          ];
-          imagenes = mezclarImagenes(imagenes);
-          imagenes.forEach((src, i) => {
-            const casilla = document.createElement('div');
-            casilla.classList.add('carta');
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = `Carta ${i + 1}`;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            casilla.appendChild(img);
-            casilla.addEventListener('click', () => abrirVentana(i + 1));
-            casillasContainer.appendChild(casilla);
-          });
-        }
-      
-        function mezclarImagenes(array) {
-          for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-          }
-          return array;
-        }
-      
-        function abrirVentana(numero) {
-          const urls = [
-            'https://part33.netlify.app/',
-            'https://ambientbronz.netlify.app/',
-            'https://partsound.netlify.app/',
-            'https://subtle-gecko-095f0a.netlify.app/',
-            'https://soundobjetaprtlt26.netlify.app/',
-            'https://aprtltgranular.netlify.app/',
-            'https://aprtltgranular.netlify.app/'
-          ];
-          if (numero >= 1 && numero <= urls.length) {
-            window.open(urls[numero - 1], '_blank');
-          } else {
-            alert(`Has seleccionado la carta número ${numero}`);
-          }
-        }
-      
-        function createReverbBuffer(context) {
-          const length = context.sampleRate * 3;
-          const impulse = context.createBuffer(2, length, context.sampleRate);
-          const impulseL = impulse.getChannelData(0);
-          const impulseR = impulse.getChannelData(1);
-          for (let i = 0; i < length; i++) {
-            const n = length - i;
-            impulseL[i] = (Math.random() * 2 - 1) * (n / length);
-            impulseR[i] = (Math.random() * 2 - 1) * (n / length);
-          }
-          return impulse;
-        }
-      
-        function iniciarAnimacionSpans() {
-          const spans = document.querySelectorAll('.mago span');
-          spans.forEach(span => {
-            span.setAttribute('data-original-text', span.innerText);
-          });
-          intervaloCambiarCaracteres = setInterval(cambiarCaracteres, 1000);
-        }
-      
-        function cambiarCaracteres() {
-          if (!animacionActiva) return;
-          const spans = document.querySelectorAll('.mago span');
-          spans.forEach(span => {
-            const textoOriginal = span.getAttribute('data-original-text');
-            let nuevoTexto = '';
-            for (let i = 0; i < textoOriginal.length; i++) {
-              if (Math.random() > 0.7) {
-                // caracter hebreo aleatorio
-                const code = 0x05D0 + Math.floor(Math.random() * (0x05EA - 0x05D0 + 1));
-                nuevoTexto += String.fromCharCode(code);
-              } else {
-                nuevoTexto += textoOriginal[i];
+            const letraArray = Array.from(letrasRestantes);
+            const letraRandom = letraArray[Math.floor(Math.random() * letraArray.length)];
+            const elementoLetra = document.createElement('div');
+            elementoLetra.classList.add('letra');
+            // Position
+            const angle = Math.random() * Math.PI;
+            const radius = 20 + Math.random() * 80;
+            const x = 50 + Math.cos(angle) * radius;
+            const y = 30 + Math.sin(angle) * radius;
+            elementoLetra.style.top = `${y}%`;
+            elementoLetra.style.left = `${x}%`;
+            elementoLetra.innerText = letraRandom;
+            container.appendChild(elementoLetra);
+            letrasEnPantalla[letraRandom] = elementoLetra;
+        
+            // Input handlers
+            document.addEventListener('keydown', e => {
+              if (letrasRestantes.has(e.key)) eliminarLetra(e.key);
+            });
+            elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
+        
+            // FREQUENCY WITH SOLFEGGIO 30%
+            const solfeggio = [396, 417, 528, 639, 741, 852];
+            const useSolf = Math.random() < 0.3;
+            const frecuencia = useSolf
+              ? solfeggio[Math.floor(Math.random() * solfeggio.length)]
+              : 200 + letras.indexOf(letraRandom) * 100;
+        
+            // AUDIO NODES
+            const osc    = audioContext.createOscillator();
+            const gainN  = audioContext.createGain();
+            const filt   = audioContext.createBiquadFilter();
+            const delay  = audioContext.createDelay();
+            const reverb = audioContext.createConvolver();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
+            filt.type = 'lowpass';
+            filt.frequency.setValueAtTime(500, audioContext.currentTime);
+            delay.delayTime.value = 0.5;
+            reverb.buffer = createReverbBuffer(audioContext);
+        
+            // Chain: osc → filt → delay → reverb → gainN → masterGain
+            osc
+              .connect(filt)
+              .connect(delay)
+              .connect(reverb)
+              .connect(gainN)
+              .connect(masterGain);
+        
+            // Volume envelope
+            const now = audioContext.currentTime;
+            gainN.gain.setValueAtTime(0, now);
+            gainN.gain.linearRampToValueAtTime(0.05, now + 2);
+            gainN.gain.setValueAtTime(0.05, now + 8);
+            gainN.gain.linearRampToValueAtTime(0, now + 10);
+        
+            osc.start(now);
+            osc.stop(now + 10);
+        
+            // Cleanup letter after 1s
+            setTimeout(() => {
+              if (container.contains(elementoLetra)) {
+                elementoLetra.remove();
+                delete letrasEnPantalla[letraRandom];
               }
+            }, 1000);
+        
+            // Next call
+            setTimeout(generarLetra, Math.random() * 1000);
+          }
+        
+          function eliminarLetra(letra) {
+            if (letrasRestantes.has(letra)) {
+              letrasRestantes.delete(letra);
+              const el = letrasEnPantalla[letra];
+              if (el) { el.remove(); delete letrasEnPantalla[letra]; }
             }
-            span.innerText = nuevoTexto;
-            span.style.textShadow = "0 0 30px white";
+          }
+        
+          // ——— WHITE NOISE GENERATION ———
+          function generarRuidoBlanco() {
+  // crea el source y asigna el buffer pre-generado
+  const whiteNoise = audioContext.createBufferSource();
+  whiteNoise.buffer = noiseBuffer;
+  whiteNoise.loop   = true;
+
+  // filtro low-pass
+  const filt   = audioContext.createBiquadFilter();
+  filt.type        = 'lowpass';
+  filt.frequency.value = 500;
+
+  // ganancia para el ruido
+  const gainN = audioContext.createGain();
+  // fade in de 1s
+  gainN.gain.setValueAtTime(0, audioContext.currentTime);
+  gainN.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 1);
+
+  // reverb
+  const reverb = audioContext.createConvolver();
+  reverb.buffer = createReverbBuffer(audioContext);
+
+  // cadena de nodos: noise → filt → reverb → gain → masterGain
+  whiteNoise
+    .connect(filt)
+    .connect(reverb)
+    .connect(gainN)
+    .connect(masterGain);
+
+  // arranca el ruido
+  whiteNoise.start(0);
+
+  // sólo ahora mostramos los boxes y generamos cartas
+  document.getElementById('boxes').style.display = 'flex';
+  crearCasillas();
+
+  // pulso periódico para micro-picos
+  function pulso() {
+    const t = audioContext.currentTime;
+    gainN.gain.cancelScheduledValues(t);
+    gainN.gain.setValueAtTime(0.05, t);
+    gainN.gain.linearRampToValueAtTime(0.1, t + 2);
+    gainN.gain.linearRampToValueAtTime(0.05, t + 4);
+  }
+  pulso();
+  setInterval(pulso, 4000);
+}
+
+        
+          // ——— UI & HELPERS ———
+          function crearCasillas() {
+            const casillas = document.getElementById('cartas');
+            casillas.innerHTML = '';
+            let imgs = ['1d.webp','2d.webp','3d.webp','4d.webp','5.gif','6.gif','7.gif'];
+            imgs = mezclarImagenes(imgs);
+            imgs.forEach((src,i) => {
+              const c = document.createElement('div');
+              c.classList.add('carta');
+              const img = document.createElement('img');
+              img.src = src;
+              img.alt = `Carta ${i+1}`;
+              img.style.width  = '100%';
+              img.style.height = '100%';
+              c.appendChild(img);
+              c.addEventListener('click', () => abrirVentana(i+1));
+              casillas.appendChild(c);
+            });
+          }
+        
+          function mezclarImagenes(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+          }
+        
+          function abrirVentana(n) {
+            const urls = [
+              'https://part33.netlify.app/',
+              'https://ambientbronz.netlify.app/',
+              'https://partsound.netlify.app/',
+              'https://subtle-gecko-095f0a.netlify.app/',
+              'https://soundobjetaprtlt26.netlify.app/',
+              'https://aprtltgranular.netlify.app/',
+              'https://aprtltgranular.netlify.app/'
+            ];
+            if (n >= 1 && n <= urls.length) window.open(urls[n-1], '_blank');
+            else alert(`Has seleccionado la carta número ${n}`);
+          }
+        
+          function createReverbBuffer(context) {
+            const len = context.sampleRate * 3;
+            const impulse = context.createBuffer(2, len, context.sampleRate);
+            const iL = impulse.getChannelData(0);
+            const iR = impulse.getChannelData(1);
+            for (let i = 0; i < len; i++) {
+              const decay = (len - i) / len;
+              iL[i] = (Math.random() * 2 - 1) * decay;
+              iR[i] = (Math.random() * 2 - 1) * decay;
+            }
+            return impulse;
+          }
+        
+          function iniciarAnimacionSpans() {
+            const spans = document.querySelectorAll('.mago span');
+            spans.forEach(s => s.setAttribute('data-original-text', s.innerText));
+            intervaloCambiarCaracteres = setInterval(cambiarCaracteres, 1000);
+          }
+        
+          function cambiarCaracteres() {
+            if (!animacionActiva) return;
+            document.querySelectorAll('.mago span').forEach(span => {
+              const orig = span.getAttribute('data-original-text');
+              let txt = '';
+              for (let i = 0; i < orig.length; i++) {
+                txt += (Math.random() > 0.7)
+                  ? String.fromCharCode(0x05D0 + Math.floor(Math.random() * (0x05EA - 0x05D0 + 1)))
+                  : orig[i];
+              }
+              span.innerText = txt;
+              span.style.textShadow = "0 0 30px white";
+            });
+          }
+        
+          function detenerAnimacionYRestaurarDibujo() {
+            animacionActiva = false;
+            clearInterval(intervaloCambiarCaracteres);
+            clearInterval(intervaloRestaurarCaracteres);
+            document.querySelectorAll('.mago span').forEach(span => {
+              const orig = span.getAttribute('data-original-text');
+              span.innerText = orig;
+              span.style.textShadow = 
+                "0 0 5px #FF4500, 0 0 10px #FF8C00, 0 0 15px #FFD700, 0 0 20px #32CD32, 0 0 25px #00BFFF, 0 0 30px #8A2BE2, 0 0 35px #00FFFF";
+            });
+          }
+        
+          // ——— PHRASE INPUT ———
+          let fraseEscrita = "";
+          document.addEventListener('keydown', e => {
+            if (!animacionActiva) return;
+            if (e.key.length === 1 || e.key === " ") fraseEscrita += e.key.toLowerCase();
+            else if (e.key === "Backspace") fraseEscrita = fraseEscrita.slice(0, -1);
+            if (fraseEscrita.length > 50) fraseEscrita = fraseEscrita.slice(-50);
+            if (fraseEscrita.includes("ordenarpensamientos") || fraseEscrita.includes("orderthoughts")) {
+    animacionActiva = false;
+    detenerAnimacionYRestaurarDibujo();
+    // en lugar de mostrar manualmente, lanza el ruido y las cartas:
+    generarRuidoBlanco();
+}
+
           });
-        }
-      
-        function detenerAnimacionYRestaurarDibujo() {
-          animacionActiva = false;
-          const spans = document.querySelectorAll('.mago span');
-          spans.forEach(span => {
-            const textoOriginal = span.getAttribute('data-original-text');
-            span.innerText = textoOriginal;
-            span.style.textShadow =
-              "0 0 5px #FF4500, 0 0 10px #FF8C00, 0 0 15px #FFD700, 0 0 20px #32CD32, 0 0 25px #00BFFF, 0 0 30px #8A2BE2, 0 0 35px #00FFFF";
-          });
-          clearInterval(intervaloCambiarCaracteres);
-          clearInterval(intervaloRestaurarCaracteres);
-        }
-      </script>
-      
-
-<script>
-
-let fraseEscrita = "";  // Aquí se va almacenando lo que el usuario escribe
-
-document.addEventListener('keydown', function(event) {
-    if (!animacionActiva) return; // Solo escuchar mientras está activo el glitch
-
-    // Solo registrar letras, espacio y backspace
-    if (event.key.length === 1 || event.key === " ") {
-        fraseEscrita += event.key.toLowerCase();
-    } else if (event.key === "Backspace") {
-        fraseEscrita = fraseEscrita.slice(0, -1);
-    }
-
-    // Opcional: limitar longitud para que no sea infinito
-    if (fraseEscrita.length > 50) {
-        fraseEscrita = fraseEscrita.slice(-50);
-    }
-
-    // Revisar si la frase correcta fue escrita
-    if (fraseEscrita.includes("ordenarpensamientos") || fraseEscrita.includes("orderthoughts")) {
-        animacionActiva = false;
-        detenerAnimacionYRestaurarDibujo();
-        document.getElementById('boxes').style.display = 'flex';
-        crearCasillas();
-    }
-});
-</script>
+        });
+        </script>
  
 
 
@@ -947,6 +935,7 @@ document.addEventListener('keydown', function(event) {
   
 </body>
 </html>
+
 
 
 
