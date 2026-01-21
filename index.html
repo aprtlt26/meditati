@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
 
@@ -634,7 +634,7 @@ const letras = [
               audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
               masterGain = audioContext.createGain();
-              masterGain.gain.setValueAtTime(0.05, audioContext.currentTime);
+              masterGain.gain.setValueAtTime(0.09, audioContext.currentTime);
               compressor = audioContext.createDynamicsCompressor();
               compressor.threshold.setValueAtTime(-24, audioContext.currentTime);
               compressor.knee.setValueAtTime(30, audioContext.currentTime);
@@ -779,7 +779,7 @@ const letras = [
           function crearCasillas() {
             const casillas = document.getElementById('cartas');
             casillas.innerHTML = '';
-            let imgs = ['1d.webp','2d.webp','3d.webp','4d.webp','5.gif','6.gif','7.gif'];
+            let imgs = ['1d.webp','2d.webp','3d.webp','4d.webp','5.gif',];
             imgs = mezclarImagenes(imgs);
             imgs.forEach((src,i) => {
               const c = document.createElement('div');
@@ -929,6 +929,88 @@ const letras = [
   
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
