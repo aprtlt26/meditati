@@ -128,7 +128,6 @@
             background-color: #d9e255;
         }
 
-       /* Centrar el contenedor en pantalla y disponerlo en fila */
 #boxes {
   display: none;              /* lo activas desde JS cuando toque */
   position: absolute;
@@ -146,7 +145,6 @@
   border: none;
 }
 
-/* Dentro de #boxes ya no hace falta posicionado absoluto ni flex-wrap */
 .cartas {
   display: flex;
   flex-wrap: nowrap;  
@@ -158,7 +156,6 @@
   justify-content: center;
 }
 
-/* Ajusta un poco el tamaño / margen si hace falta */
 .carta {
   flex: 0 0 auto;             /* no crece, no encoge */
   width: 70px;
@@ -177,7 +174,6 @@
             background-color: #88888844;
         }
 
-        /* Optimizaciones para móvil */
         @media screen and (max-width: 200px) {
             .container {
                 width: 90%;
@@ -215,10 +211,10 @@
 }
 
 h1 {
-    font-family: 'Cormorant Garamond', serif; /* elegante y mística */
+    font-family: 'Cormorant Garamond', serif; 
     font-size: 3em;
     letter-spacing: 0.1em;
-    color: #f5f5f5; /* blanco perla */
+    color: #f5f5f5; 
     text-shadow: 
       0 0 10px #a1c4fd, 
       0 0 20px #c2e9fb, 
@@ -229,10 +225,10 @@ h1 {
   }
 
   p{
-    font-family: 'Cormorant Garamond', serif; /* elegante y mística */
+    font-family: 'Cormorant Garamond', serif; 
     font-size: 1.9em;
     letter-spacing: 0.1em;
-    color: #f5f5f5; /* blanco perla */
+    color: #f5f5f5; 
     text-shadow: 
       0 0 10px #a1c4fd, 
       0 0 20px #c2e9fb, 
@@ -250,7 +246,6 @@ h1 {
   }
 
 
-/* ——— ALERTA ESTILIZADA ——— */
 #customAlert {
     font-family:  'Cormorant Garamond', serif;;
   display: none;
@@ -297,13 +292,12 @@ h1 {
   min-height: 100vh;
 }
 
-/* Estilo del footer fijo */
 .site-footer {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: #000000;       /* o el color que prefieras */
+  background: #000000;      
   color: #313131;    
   font-family:'Noto Sans Hebrew', monospace;
   font-size: 3px;
@@ -315,12 +309,11 @@ h1 {
 }
 
 main {
-  padding-bottom: 40px; /* deja espacio suficiente para el footer */
+  padding-bottom: 40px; 
 }
 
 
 
-/* ——— BOTÓN DE AYUDA (icono pregunta) ——— */
 #helpBtn {
   position: absolute;
   top: 20px;
@@ -340,7 +333,6 @@ main {
   box-shadow: 0 0 20px #b1bbbb, 0 0 30px #d9ffff;
 }
 
-/* ——— MODAL DE AYUDA ——— */
 #helpModal {
   display: none;
   position: fixed;
@@ -438,7 +430,7 @@ main {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.8);
-  display: none;                /* <-- arrancamos oculto */
+  display: none;                
   align-items: center;
   justify-content: center;
   z-index: 10000;
@@ -493,13 +485,11 @@ main {
     const links     = overlay.querySelectorAll('.subscribe-link, form button');
     const btnClose  = document.getElementById('closeSubscribe');
 
-    // Si ya se suscribió antes, no mostramos
     if (localStorage.getItem('subscripto') === 'false') return;
 
-    // Mostrar modal
+
     overlay.style.display = 'flex';
 
-    // Al clicar en cualquier enlace o botón de donar
     links.forEach(el =>
       el.addEventListener('click', () => {
         localStorage.setItem('subscripto','true');
@@ -507,7 +497,6 @@ main {
       })
     );
 
-    // Cerrar con la X
     btnClose.addEventListener('click', () => {
       localStorage.setItem('subscripto','true');
       overlay.style.display = 'none';
@@ -670,7 +659,7 @@ main {
                                                 ..............................'','''.'',;;;;,',;::,,;;;;;,'''',,;:;'',;''',,';:;;,,;:lc,';:c:;;;,':l:'...''..;:,,'.',...';;::;',;',,';c;..''....':ol,';c::c:,'';,'',,;;;;;;,'',;;,.';,'',;;;;,,,;;,,,,'';::;,,'',;;;,''.........................................           .....
                                              ................................'''....''',;,''';;;'',;,;,'....'',;;,'',,'',,'',;;,,,;:c:,',;:;;;;,.,c:'.......';,''..''...',;;;,'','''''::'........':c:,',:;::;'..,,..'',;;,,,'''',;,..','.',,,,,'',;,'''''',;;,'''.',;;,'..........................................              
                                               .....................................'',,,'.',;,'.',,,,'......'',,'.'''..'''',;,''',;::,'';;;,,,,.';:,........','''........',,,,..''.'..,:,.........':c;'.,;,;;;'..,'....',,,,,'...','...'...''',,'..',,..'...,;;,'...',,,,'............................  ............         </span>   
-    </pre>            <!-- Arte ASCII completo -->
+    </pre>           
             </span>
             </pre>
 
@@ -679,14 +668,12 @@ main {
             
     <div id="boxes" class="container">
         <div id="cartas" class="cartas">
-            <!-- Las cartas se generarán dinámicamente aquí -->
         </div>
     </div>
         </div>
     </div>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-          // ——— GLOBAL VARIABLES ———
 const letras = [
   "\u2648\uFE0E", // ♈︎
   "\u2649\uFE0E", // ♉︎
@@ -985,7 +972,6 @@ const letras = [
     </svg>
   </div>
   
-<!-- ——— MODAL DE AYUDA ——— -->
 <div id="helpModal">
   <div class="modal-content">
     <h2>Atziluth – Meditación y Estimulación Cerebral</h2>
@@ -1012,7 +998,6 @@ const letras = [
 </div>
 
 
-     <!-- Alerta estilizada -->
   <div id="customAlert">
     <p>When you feel it is enough, write the phrase: <strong>ORDER THOUGHTS</strong> </p>
     <button id="closeAlert">OK</button>
