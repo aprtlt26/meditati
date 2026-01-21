@@ -41,6 +41,11 @@
 
         }
 
+        .letra{
+  font-family: "Segoe UI Symbol","Noto Sans Symbols 2","Symbola", sans-serif;
+}
+
+
         .container {
             top: 120px;
             position: relative;
@@ -421,8 +426,8 @@ main {
 
 
 
-    <h1>Atziluth</h1>
-    <p>אֲצִילוּת</p>
+    <h1>.</h1>
+    <p>.</p>
 
     <canvas></canvas>
     <div class="container">
@@ -682,7 +687,20 @@ main {
     <script>
         window.addEventListener('DOMContentLoaded', () => {
           // ——— GLOBAL VARIABLES ———
-          const letras = "אבגדהוזחטיכלמנסעפצקרשת".split("");
+const letras = [
+  "\u2648\uFE0E", // ♈︎
+  "\u2649\uFE0E", // ♉︎
+  "\u264A\uFE0E", // ♊︎
+  "\u264B\uFE0E", // ♋︎
+  "\u264C\uFE0E", // ♌︎
+  "\u264D\uFE0E", // ♍︎
+  "\u264E\uFE0E", // ♎︎
+  "\u264F\uFE0E", // ♏︎
+  "\u2650\uFE0E", // ♐︎
+  "\u2651\uFE0E", // ♑︎
+  "\u2652\uFE0E", // ♒︎
+  "\u2653\uFE0E"  // ♓︎
+];
           const letrasRestantes = new Set(letras);
           const letrasEnPantalla = {};
           const container = document.querySelector('.container');
@@ -696,11 +714,9 @@ main {
           let audioContext, masterGain, compressor, noiseBuffer;
           let intervaloCambiarCaracteres, intervaloRestaurarCaracteres;
         
-          // ——— HELP MODAL HANDLERS ———
           helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
           helpClose.addEventListener('click', () => helpModal.style.display = 'none');
         
-          // ——— START BUTTON ———
           botonComenzar.addEventListener('click', () => customAlert.style.display = 'flex');
         
           closeAlert.addEventListener('click', () => {
@@ -708,7 +724,6 @@ main {
             if (!audioContext) {
               audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-              // ——— MASTER GAIN + COMPRESSOR ———
               masterGain = audioContext.createGain();
               masterGain.gain.setValueAtTime(0.05, audioContext.currentTime);
               compressor = audioContext.createDynamicsCompressor();
@@ -720,7 +735,6 @@ main {
               masterGain.connect(compressor);
               compressor.connect(audioContext.destination);
         
-              // ——— PREGENERATE WHITE NOISE BUFFER ———
               noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
               const nbData = noiseBuffer.getChannelData(0);
               for (let i = 0; i < nbData.length; i++) nbData[i] = Math.random() * 2 - 1;
@@ -732,7 +746,6 @@ main {
             document.querySelectorAll('.mago, .letra').forEach(el => el.classList.add('no-shadow'));
           });
         
-          // ——— GENERATE LETTERS ———
           function generarLetra() {
             if (letrasRestantes.size === 0) {
               detenerAnimacionYRestaurarDibujo();
@@ -743,7 +756,7 @@ main {
             const letraRandom = letraArray[Math.floor(Math.random() * letraArray.length)];
             const elementoLetra = document.createElement('div');
             elementoLetra.classList.add('letra');
-            // Position
+            
             const angle = Math.random() * Math.PI;
             const radius = 20 + Math.random() * 80;
             const x = 50 + Math.cos(angle) * radius;
@@ -754,20 +767,20 @@ main {
             container.appendChild(elementoLetra);
             letrasEnPantalla[letraRandom] = elementoLetra;
         
-            // Input handlers
+    
             document.addEventListener('keydown', e => {
               if (letrasRestantes.has(e.key)) eliminarLetra(e.key);
             });
             elementoLetra.addEventListener('touchstart', () => eliminarLetra(letraRandom));
         
-            // FREQUENCY WITH SOLFEGGIO 30%
+        
             const solfeggio = [396, 417, 528, 639, 741, 852];
             const useSolf = Math.random() < 0.3;
             const frecuencia = useSolf
               ? solfeggio[Math.floor(Math.random() * solfeggio.length)]
               : 200 + letras.indexOf(letraRandom) * 100;
         
-            // AUDIO NODES
+        
             const osc    = audioContext.createOscillator();
             const gainN  = audioContext.createGain();
             const filt   = audioContext.createBiquadFilter();
@@ -780,7 +793,6 @@ main {
             delay.delayTime.value = 0.5;
             reverb.buffer = createReverbBuffer(audioContext);
         
-            // Chain: osc → filt → delay → reverb → gainN → masterGain
             osc
               .connect(filt)
               .connect(delay)
@@ -788,7 +800,6 @@ main {
               .connect(gainN)
               .connect(masterGain);
         
-            // Volume envelope
             const now = audioContext.currentTime;
             gainN.gain.setValueAtTime(0, now);
             gainN.gain.linearRampToValueAtTime(0.05, now + 2);
@@ -798,7 +809,6 @@ main {
             osc.start(now);
             osc.stop(now + 10);
         
-            // Cleanup letter after 1s
             setTimeout(() => {
               if (container.contains(elementoLetra)) {
                 elementoLetra.remove();
@@ -806,7 +816,6 @@ main {
               }
             }, 1000);
         
-            // Next call
             setTimeout(generarLetra, Math.random() * 1000);
           }
         
@@ -818,43 +827,34 @@ main {
             }
           }
         
-          // ——— WHITE NOISE GENERATION ———
           function generarRuidoBlanco() {
-  // crea el source y asigna el buffer pre-generado
   const whiteNoise = audioContext.createBufferSource();
   whiteNoise.buffer = noiseBuffer;
   whiteNoise.loop   = true;
 
-  // filtro low-pass
   const filt   = audioContext.createBiquadFilter();
   filt.type        = 'lowpass';
   filt.frequency.value = 500;
 
-  // ganancia para el ruido
   const gainN = audioContext.createGain();
-  // fade in de 1s
   gainN.gain.setValueAtTime(0, audioContext.currentTime);
   gainN.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 1);
 
-  // reverb
+
   const reverb = audioContext.createConvolver();
   reverb.buffer = createReverbBuffer(audioContext);
 
-  // cadena de nodos: noise → filt → reverb → gain → masterGain
   whiteNoise
     .connect(filt)
     .connect(reverb)
     .connect(gainN)
     .connect(masterGain);
 
-  // arranca el ruido
   whiteNoise.start(0);
 
-  // sólo ahora mostramos los boxes y generamos cartas
   document.getElementById('boxes').style.display = 'flex';
   crearCasillas();
 
-  // pulso periódico para micro-picos
   function pulso() {
     const t = audioContext.currentTime;
     gainN.gain.cancelScheduledValues(t);
@@ -867,7 +867,6 @@ main {
 }
 
         
-          // ——— UI & HELPERS ———
           function crearCasillas() {
             const casillas = document.getElementById('cartas');
             casillas.innerHTML = '';
@@ -955,7 +954,6 @@ main {
             });
           }
         
-          // ——— PHRASE INPUT ———
           let fraseEscrita = "";
           document.addEventListener('keydown', e => {
             if (!animacionActiva) return;
@@ -965,7 +963,6 @@ main {
             if (fraseEscrita.includes("ordenarpensamientos") || fraseEscrita.includes("orderthoughts")) {
     animacionActiva = false;
     detenerAnimacionYRestaurarDibujo();
-    // en lugar de mostrar manualmente, lanza el ruido y las cartas:
     generarRuidoBlanco();
 }
 
@@ -1027,6 +1024,49 @@ main {
   
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
