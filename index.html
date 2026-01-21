@@ -37,7 +37,7 @@
             height: 100vh;
             overflow: hidden;
             color: white;
-            flex-direction: column; /* 👈 Esto organiza en columna */
+            flex-direction: column;
 
         }
 
@@ -129,18 +129,18 @@
         }
 
 #boxes {
-  display: none;              /* lo activas desde JS cuando toque */
+  display: none;             
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-45%, -50%);
-  display: flex;              /* contenedor flex */
-  flex-direction: row;        /* en fila */
+  display: flex;          
+  flex-direction: row;       
   align-items: center;
   justify-content: center;
-  gap: 10px;                  /* espacio entre cartas */
-  padding: 10px;              /* opcional, para un pequeño margen interior */
-  background: transparent;    /* o lo que quieras */
+  gap: 10px;           
+  padding: 10px;            
+  background: transparent;   
   z-index: 1;
   border: none;
 }
@@ -148,7 +148,7 @@
 .cartas {
   display: flex;
   flex-wrap: nowrap;  
-  margin-top: 70%;        /* ¡nunca envuelve! */
+  margin-top: 70%;        
   justify-content: space-between;
   align-items: center;
   gap: 8px;
@@ -157,10 +157,10 @@
 }
 
 .carta {
-  flex: 0 0 auto;             /* no crece, no encoge */
+  flex: 0 0 auto;             
   width: 70px;
   height: 120px;
-  margin: 0;                  /* el `gap` de #boxes se encarga del espacio */
+  margin: 0;             
   background-color: #030303a9;
   border: 2px solid #fffbc2d7;
   display: flex;
@@ -424,85 +424,7 @@ main {
     <canvas></canvas>
     <div class="container">
 
-        
-<!-- Overlay + Modal de suscripción/donación -->
-<div id="subscribeOverlay" style="
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: none;                
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-">
-  <div id="subscribeModal" style="
-    width: 220px;
-    max-height: 50vh;
-    overflow-y: auto;
-    padding: 0.6rem;
-    background: #111;
-    color: #fff;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    font-size: 0.85rem;
-    position: relative;
-  ">
-    <button id="closeSubscribe" aria-label="Cerrar" style="
-      position: absolute;
-      top: -40px;
-      right: -55px;
-      background: transparent;
-      border: none;
-      color: #bbb;
-      font-size: 3rem;
-      cursor: pointer;
-    ">×</button>
 
-    <div style="display:flex; flex-direction:column; gap:0.3rem;">
-      <a href="https://www.youtube.com/@psychokiller012" target="_blank" class="subscribe-link" style="
-        background:#000; color:#fff; padding:.2rem; border-radius:4px; text-decoration:none;
-      ">YouTube</a>
-      <a href="https://www.instagram.com/ruido.y.conjuro/" target="_blank" class="subscribe-link" style="
-        background:#000; color:#fff; padding:.2rem; border-radius:4px; text-decoration:none;
-      ">Instagram</a>
-      <a href="https://www.tiktok.com/@arte_psique" target="_blank" class="subscribe-link" style="
-        background:#000; color:#fff; padding:.2rem; border-radius:4px; text-decoration:none;
-      ">TikTok</a>
-      <form action="https://paypal.me/Aprtlt?country.x=CO&locale.x=es_XC" target="_blank">
-        <button type="submit" style="
-          width:100%; background:#0070ba; color:#fff; padding:.2rem; border:none; border-radius:4px;
-        ">Donar $5 PayPal</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const overlay   = document.getElementById('subscribeOverlay');
-    const links     = overlay.querySelectorAll('.subscribe-link, form button');
-    const btnClose  = document.getElementById('closeSubscribe');
-
-    if (localStorage.getItem('subscripto') === 'false') return;
-
-
-    overlay.style.display = 'flex';
-
-    links.forEach(el =>
-      el.addEventListener('click', () => {
-        localStorage.setItem('subscripto','true');
-        overlay.style.display = 'none';
-      })
-    );
-
-    btnClose.addEventListener('click', () => {
-      localStorage.setItem('subscripto','true');
-      overlay.style.display = 'none';
-    });
-  });
-</script>
         <button class="boton-comenzar" id="botonComenzar">Start</button>
         <div class="mago" id="mago">
             <pre>
